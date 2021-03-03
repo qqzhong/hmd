@@ -53,6 +53,12 @@ def scan_android(path, func):
             if entry.name.startswith('.git'):
                 #print('Ignore={}'.format(entry.path))
                 pass
+            elif entry.name.startswith('.svn'):
+                #print('Ignore={}'.format(entry.path))
+                pass
+            elif entry.name=='CVS':
+                #print('Ignore={}'.format(entry.path))
+                pass
             else:
                 scan_android(entry.path, func)
         elif entry.is_dir(follow_symlinks=True):
