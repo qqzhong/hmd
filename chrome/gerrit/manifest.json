@@ -1,0 +1,31 @@
+﻿{
+	"manifest_version": 2,
+	"name": "gerrit",
+	"version": "0.0.1",// my version
+	"description": "church.zhong@hmdglobal",
+	"background": { "scripts": ["js/background.js"] },
+	"page_action": {
+		"default_icon": {
+			"19": "img/icon19.png",
+			"38": "img/icon38.png"
+		},
+		"default_title": "gerrit", // shown in tooltip
+		"default_popup": "popup.html"
+	},
+	"permissions" :
+	[
+		"contextMenus", // 右键菜单
+		"tabs", // 标签
+		"notifications", // 通知
+		"webRequest", // web请求
+		"webRequestBlocking",
+		"http://*/*", // 可以通过executeScript或者insertCSS访问的网站
+		"https://*/*" // 可以通过executeScript或者insertCSS访问的网站
+	],
+	"content_scripts":
+	[{
+		"matches":["http://*/*", "https://*/*"],
+		"js":["js/jquery-3.6.0.min.js", "js/content_script.js"],
+		"run_at": "document_end"
+	}]
+}

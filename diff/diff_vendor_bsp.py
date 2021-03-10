@@ -15,36 +15,26 @@ import hashlib
 from datetime import datetime
 
 #python3 -m cProfile church/diff_vendor_bsp.py
-#Punisher BSP分支0227代码:
-#\\10.231.13.158\local\int\weikun.yan\code\Punisher_ROW_BSP_0227
-#高通15基线代码:
-#\\10.231.13.158\local\int\weikun.yan\code\Qcom_baseline_r1.0_r00015
-
-#@Church Zhong
-# Kernel\ 下除msm-5.4\techpack\camera以外的其它目录
-# Device\
-# Build\
-
 # Watch out:global variables
-bspPath = '/local/int/weikun.yan/code/Punisher_ROW_BSP_0227'
-#bspPath = '/data/new'
+bspPath = '/local/int/weikun.yan/code/Punisher_ROW_BSP_0303/'
 bspPathLength = len(bspPath)
-qcomPath = '/local/int/weikun.yan/code/Qcom_baseline_r1.0_r00015'
-#qcomPath = '/data/church'
+qcomPath = '/local/int/weikun.yan/code/Qcom_baseline_r015/'
 qcomPathLength = len(qcomPath)
 # we're happy if android source are given.
-androidSrc = ['build', 'device', 'kernel']
-#androidSrc = ['shortcut-fe']
+androidSrc = ['bootable','build','device','frameworks','hardware','kernel','vendor']
 bspDict = {}
-bspCompared = []
-output = ''
+# Output:what are BSP modified.
+bspModifiedOutput = ''
+# Output:what are Qcom baseline codes.
+qcomBaselineOutput = ''
 
-def copy_file(name):
-    target = output + os.sep + name
+def copy_file(srcPath, destPath, name):
+    target = destPath + os.sep + name
     targetDir = os.path.dirname(target)
     if not os.path.exists(targetDir):
         os.makedirs(targetDir);
-    shutil.copyfile(bspPath + os.sep + name, target)
+    shutil.copyfile(srcPath + os.sep + name, target)
+    print('copy:{}'.format(target))
 
 def scan_android(path, func):
     """Scan android"""
@@ -95,21 +85,24 @@ def qcom_func(entry):
     global bspPath
     global qcomPathLength
     global bspDict
-    global bspCompared
-    name = str(entry.path)
-    name = name[qcomPathLength:]
+    global bspModifiedOutput
+    global qcomBaselineOutput
+
+    fullName = str(entry.path)
+    filePath = os.path.dirname(fullName)
+    fileName = fullName[qcomPathLength:]
     md5sum = hashlib.md5(open(entry.path,'rb').read()).hexdigest()
     #size = entry.stat(follow_symlinks=False).st_size
-    #row = '{:0>32d},{},{},{},{}'.format(size, name, size, 0, md5sum)
-    #print('{0},{1}'.format(name, md5sum))
+    #row = '{:0>32d},{},{},{},{}'.format(size, fileName, size, 0, md5sum)
+    #print('{0},{1}'.format(fileName, md5sum))
 
-    if name in bspDict:
-        bspCompared.append(name)
-        if bspDict[name]==md5sum:
+    if fileName in bspDict:
+        if bspDict[fileName]==md5sum:
             pass
         else:
-            copy_file(name)
-            print(name)
+            copy_file(bspPath, bspModifiedOutput, fileName)
+            copy_file(qcomPath, qcomBaselineOutput, fileName)
+        bspDict[fileName] = None
 
 def scan_qcom(path):
     scan_android(path, qcom_func)
@@ -117,14 +110,17 @@ def scan_qcom(path):
 def work(path):
     global bspPath
     global qcomPath
-    global output
+    global bspModifiedOutput
+    global qcomBaselineOutput
 
     print('bsp={}'.format(bspPath))
     print('qcom={}'.format(qcomPath))
 
-    moment = datetime.now().strftime("%Y%m%d%H%M%S")
-    output = os.getcwd() + os.sep + 'diff_' + moment
-    os.mkdir(output)
+    moment = datetime.now().strftime("%Y_%m%d_%H%M%S")
+    bspModifiedOutput = '{0}{1}{2}{3}{4}{5}'.format(os.getcwd(),os.sep,'extract_',moment,os.sep,'bspModified')
+    os.makedirs(bspModifiedOutput)
+    qcomBaselineOutput = '{0}{1}{2}{3}{4}{5}'.format(os.getcwd(),os.sep,'extract_',moment,os.sep,'qcomBaseline')
+    os.makedirs(qcomBaselineOutput)
 
     for f in androidSrc:
         scan_bsp(bspPath + os.sep + f)
@@ -133,14 +129,9 @@ def work(path):
         scan_qcom(qcomPath + os.sep + f)
 
     # BSP added something
-    for key in bspCompared:
-        bspDict[key] = 'compared'
-        pass
     for key, value in bspDict.items():
-        if value=='compared':
-            pass
-        else:
-            copy_file(key)
+        if value:
+            copy_file(bspPath, bspModifiedOutput, key)
             print('BSP added={}'.format(key))
 
 def main():
