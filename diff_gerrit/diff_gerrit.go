@@ -242,7 +242,7 @@ func main() {
 	//devBranchVendorLen := len(devBranchVendor)
 	fmt.Println("devBranchVendor=" + devBranchVendor)
 
-	//gerrit
+	//gerrit,slash
 	host := "hmdgerritserver.southeastasia.cloudapp.azure.com"
 	port := "29418"
 	pushPrefix := "git push ssh://" + *username + "@" + host + ":" + port + "/" + devBranchVendor + "/"

@@ -212,8 +212,8 @@ func elapsedTime(start time.Time) {
 func main() {
 	defer elapsedTime(time.Now())
 
-	var bspPath = flag.String("b", "bspPath", "BSP android path")
-	var qcomPath = flag.String("q", "qcomPath", "Qcom android path")
+	var bspPath = flag.String("bsp", "bspPath", "BSP android path")
+	var qcomPath = flag.String("qcom", "qcomPath", "Qcom android path")
 	var android = flag.String("list", "build,device,frameworks,hardware,kernel,vendor", "list of android path")
 	flag.Parse()
 	fmt.Println("bspPath=" + *bspPath)

@@ -14,5 +14,25 @@ obvious, `androidSrc`, it means android source directories that `BSP manufacture
 ## 2. run `diff_vendor_bsp.py`  or `run diff_vendor_bsp.py > diff.log`.
 
 
-## 3. bug report to `church.zhong@hmdglobal.com`.
+## 3.Output example.
+
+
+`Modified: shortcut-fe/README`
+`Added: shortcut-fe/xx.txt`
+
+```c
+android@Church:/data/tmp$ tree extract_2021_0304_101022/
+extract_2021_0304_101022/
+|-- bspModified
+|   `-- shortcut-fe
+|       |-- README
+|       `-- xx.txt
+`-- qcomBaseline
+    `-- shortcut-fe
+        `-- README
+
+4 directories, 3 files
+```
+
+## 4. bug report to `church.zhong@hmdglobal.com`.
 

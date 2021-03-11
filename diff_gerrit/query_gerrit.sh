@@ -5,6 +5,7 @@
 # @function           :  query gerrit database by ssh.
 # @see                :  
 # @require            :  OpenSSH_7.6p1 Ubuntu-4ubuntu0.3, OpenSSL 1.0.2n  7 Dec 2017
+#set -x
 SECONDS=0
 EX_OK=0
 EX_USAGE=64
@@ -14,7 +15,7 @@ err() {
 }
 
 #==================Config=======================================
-date="2021-03-05";
+date="2021-03-10";
 username="church.zhong";
 bspBranch="sm4350_TF_AKT_BSP";
 devBranch="sm4350_TF_AKT_DEV";
@@ -33,6 +34,8 @@ devBranchJson=${devBranch}".json";
 echo "bspBranchJson=${bspBranchJson}";
 echo "devBranchJson=${devBranchJson}";
 
+rm -f ${bspBranchJson};
+rm -f ${devBranchJson};
 query="ssh -p 29418 ${username}@hmdgerritserver.hmdglobal.com gerrit query --format=json --current-patch-set"
 ${query} "(status:merged AND branch:"${bspBranch}") AND after:"${date} > ${bspBranchJson};
 sync;
